@@ -23,9 +23,11 @@ export default class PetRepository implements PetInterface {
     async listaPet(): Promise<PetEntity[]> {
         return await this.petRepository.find();
     }
+
     atualizaPet(id: number, pet: PetEntity): void {
         throw new Error("Method not implemented.");
     }
+    
     deletaPet(id: number, pet: PetEntity): void {
         throw new Error("Method not implemented.");
     }

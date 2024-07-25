@@ -1,22 +1,16 @@
 import { Request, Response } from "express";
-import Pet from "../types/Pet";
 import EnumEspecie from "../enum/Especie";
 import PetRepository from "../repositories/PetRepository";
 import PetEntity from "../entities/PetEntity";
 import EnumPorte from "../enum/Porte";
-
-let id = 1;
-function geraId() {
-  id = id + 1;
-  return id;
-}
-
-let listaDePets : Pet[] = [];
-
+import { TipoRequestBodyPet, TipoRequestParamsPet, TipoResponseBodyPet } from "../types/Pet";
 export default class PetController {
     constructor(private repository: PetRepository) {}
 
-    async criaPet(req: Request, res: Response) {
+    async criaPet(
+        req: Request<TipoRequestParamsPet, {}, TipoRequestBodyPet>, 
+        res: Response<TipoResponseBodyPet>
+    ) {
         const { adotado, especie, dataDeNascimento, nome, porte } = <PetEntity>req.body;
 
         try {
@@ -30,48 +24,70 @@ export default class PetController {
             const novoPet = new PetEntity(nome, especie, dataDeNascimento, adotado, porte);
             await this.repository.criaPet(novoPet);
     
-            return res.status(201).json(novoPet);
+            return res.status(201).json({ data: { id: novoPet.id, nome, especie, porte } });
         } catch(err) {
             res.status(500).json({ error: err })
         }
     }
 
-    async listaPets (req: Request, res: Response) {
+    async listaPets (
+        req: Request<TipoRequestParamsPet, {}, TipoRequestBodyPet>, 
+        res: Response<TipoResponseBodyPet>
+    ) {
         try {
             const pets = await this.repository.listaPet();
-            return res.status(200).json(pets);
+            const data = pets.map((pet) => {
+                return {
+                    id: pet.id,
+                    nome: pet.nome,
+                    porte: pet.porte,
+                    especie: pet.especie
+                }
+            })
+            return res.status(200).json({ data });
         } catch(err) {
             return res.status(500).json({ error: err })
         }
     }
         
-    atualizaPet (req: Request, res: Response) {
-        const { id } = req.params;
-        const { adotado, especie, dataDeNascimento: dataDeNascimento, nome} = req.body as Pet;
-        const pet = listaDePets.find((pet) => pet.id === Number(id));
-        if (!pet) { 
-            return res.status (404).json({ erro: "Pet não encontrado" });
-        }
+    // async atualizaPet (
+    //     req: Request<TipoRequestParamsPet, {}, TipoRequestBodyPet>, 
+    //     res: Response<TipoResponseBodyPet>
+    // ) {
+    //     const { id } = req.params;
+    //     const { success, message } = await this.repository.atualizaPet(
+    //         Number(id),
+    //         req.body as PetEntity
+    //     );
         
-        pet.nome = nome;
-        pet.dataDeNascimento = dataDeNascimento;
-        pet.especie = especie;
-        pet.adotado = adotado;
-        return res.status (200).json (pet);
-    }
+    //     if (!success) {
+    //         return res.status(404).json({ error: message });
+    //     }
 
-    deletaPet (req: Request, res: Response) {
-        const { id } = req.params;
-        const pet = listaDePets.find((pet) => pet.id === Number(id)); 
-        if (!pet) {
-            return res.status (404).json({ erro: "Pet não encontrado" }); 
-        }
-        const index = listaDePets.indexOf(pet);
-        listaDePets.splice (index, 1);
-        return res.status(200).json({ mensagem: "Pet deletado com sucesso" });
-    }    
+    //     return res.status(404).json({ data: message }) 
+    // }
 
-    async adotaPet(req: Request, res: Response) {
+    // async deletaPet (
+    //     req: Request<TipoRequestParamsPet, {}, TipoRequestBodyPet>, 
+    //     res: Response<TipoResponseBodyPet>
+    // ) {
+    //     const { id } = req.params;
+    //     const { success, message } = await this.repository.atualizaPet(
+    //         Number(id),
+    //         req.body as PetEntity
+    //     );
+        
+    //     if (!success) {
+    //         return res.status(404).json({ error: message });
+    //     }
+
+    //     return res.status(404).json({ data: message }) 
+    // }    
+
+    async adotaPet(
+        req: Request<TipoRequestParamsPet, {}, TipoRequestBodyPet>, 
+        res: Response<TipoResponseBodyPet>
+    ) {
         const { pet_id, adotante_id } = req.params;
     
         const { success, message } = await this.repository.adotaPet(
@@ -80,23 +96,29 @@ export default class PetController {
         );
     
         if (!success) {
-          return res.status(404).json({ message });
+          return res.status(404).json({ error: message });
         }
         return res.sendStatus(204);
     }
 
-    async buscaPetPeloPorte(req: Request, res: Response) {
+    async buscaPetPeloPorte(
+        req: Request<TipoRequestParamsPet, {}, TipoRequestBodyPet>, 
+        res: Response<TipoResponseBodyPet>
+    ) {
         const { porte } = req.query;
         const listaDePets = await this.repository.buscaPetPeloPorte(porte as EnumPorte);
-        return res.status(200).json(listaDePets);
+        return res.status(200).json({ data: listaDePets});
     }
 
-    async buscaPetPorCampoGenerico(req: Request, res: Response) {
+    async buscaPetPorCampoGenerico(
+        req: Request<TipoRequestParamsPet, {}, TipoRequestBodyPet>, 
+        res: Response<TipoResponseBodyPet>
+    ) {
         const { campo, valor } = req.query;
         const listaDePets = await this.repository.buscaPetPorCampoGenerico(
             campo as keyof PetEntity,
             valor as string
         );
-        return res.status(200).json(listaDePets);
+        return res.status(200).json({ data: listaDePets});
     }
 }
