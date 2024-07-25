@@ -3,7 +3,6 @@ import AdotanteEntity from "../entities/Adotante";
 import AdotanteRepository from "../repositories/AdotanteRepository";
 import EnderecoEntity from "../entities/Endereco";
 import { TipoRequestBodyAdotante, TipoRequestParamsAdotante, TipoResponseBodyAdotante } from "../types/Adotante";
-
 export default class AdotanteController {
   constructor(private repository: AdotanteRepository) {}
 
@@ -55,7 +54,8 @@ export default class AdotanteController {
       return {
         id: adotante.id,
         nome: adotante.nome,
-        celular: adotante.celular
+        celular: adotante.celular,
+        endereco: adotante.endereco ?? undefined,
       }
     })
     return res.json({ data });
@@ -78,13 +78,13 @@ export default class AdotanteController {
   }
 
   async atualizaEnderecoAdotante(
-    req: Request<TipoRequestParamsAdotante, {}, TipoRequestBodyAdotante>, 
+    req: Request<TipoRequestParamsAdotante, {}, EnderecoEntity>, 
     res: Response<TipoResponseBodyAdotante>) {
     const { id } = req.params;
 
     const { success, message } = await this.repository.atualizaEnderecoAdotante(
       Number(id), 
-      req.body.endereco as EnderecoEntity
+      req.body
     );
 
     if (!success) {
