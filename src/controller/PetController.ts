@@ -14,19 +14,12 @@ export default class PetController {
         const { adotado, especie, dataDeNascimento, nome, porte } = <PetEntity>req.body;
 
         try {
-            if (!Object.values(EnumEspecie).includes(especie)) {
-                return res.status(400).json({ error: "Espécie inválida" });
-            }
-            if (porte && !(porte in EnumPorte)) {
-                return res.status(400).json({ error: "Porte inválido!" });
-            }
-    
             const novoPet = new PetEntity(nome, especie, dataDeNascimento, adotado, porte);
             await this.repository.criaPet(novoPet);
     
-            return res.status(201).json({ data: { id: novoPet.id, nome, especie, porte } });
+            return res.status(201).json({ dados: { id: novoPet.id, nome, especie, porte } });
         } catch(err) {
-            res.status(500).json({ error: err })
+            res.status(500).json({ erros: err })
         }
     }
 
@@ -40,13 +33,13 @@ export default class PetController {
                 return {
                     id: pet.id,
                     nome: pet.nome,
-                    porte: pet.porte,
+                    porte: pet.porte !== null ? pet.porte : undefined,
                     especie: pet.especie
                 }
             })
-            return res.status(200).json({ data });
+            return res.status(200).json({ dados: data });
         } catch(err) {
-            return res.status(500).json({ error: err })
+            return res.status(500).json({ erros: err })
         }
     }
         
@@ -96,7 +89,7 @@ export default class PetController {
         );
     
         if (!success) {
-          return res.status(404).json({ error: message });
+          return res.status(404).json({ erros: message });
         }
         return res.sendStatus(204);
     }
@@ -107,7 +100,7 @@ export default class PetController {
     ) {
         const { porte } = req.query;
         const listaDePets = await this.repository.buscaPetPeloPorte(porte as EnumPorte);
-        return res.status(200).json({ data: listaDePets});
+        return res.status(200).json({ dados: listaDePets});
     }
 
     async buscaPetPorCampoGenerico(
@@ -119,6 +112,6 @@ export default class PetController {
             campo as keyof PetEntity,
             valor as string
         );
-        return res.status(200).json({ data: listaDePets});
+        return res.status(200).json({ dados: listaDePets});
     }
 }
