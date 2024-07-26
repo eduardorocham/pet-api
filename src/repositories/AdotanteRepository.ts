@@ -33,18 +33,18 @@ export default class AdotanteRepository implements InterfaceAdotanteRepository {
     async atualizaAdotante(
       id: number,
       newData: AdotanteEntity
-    ): Promise<{ success: boolean; message?: string }> {
-        const adotanteToUpdate = await this.repository.findOne({ where: { id } });
-      
-        if (!adotanteToUpdate) {
-          throw new NaoEncontrado("Adotante não encontrado")
-        }
+    ) {
+      const adotanteToUpdate = await this.repository.findOne({ where: { id } });
+    
+      if (!adotanteToUpdate) {
+        throw new NaoEncontrado("Adotante não encontrado")
+      }
 
-        Object.assign(adotanteToUpdate, newData);
+      Object.assign(adotanteToUpdate, newData);
 
-        await this.repository.save(adotanteToUpdate);
+      await this.repository.save(adotanteToUpdate);
 
-        return { success: true };
+      return { success: true };
     }
     
     async deletaAdotante(id: number) {

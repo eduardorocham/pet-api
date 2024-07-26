@@ -2,6 +2,7 @@ import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import EnumEspecie from "../enum/Especie";
 import AdotanteEntity from "./Adotante";
 import EnumPorte from "../enum/Porte";
+import AbrigoEntity from "./Abrigo";
 
 @Entity()
 export default class PetEntity {
@@ -17,8 +18,14 @@ export default class PetEntity {
     dataDeNascimento: Date;
     @Column()
     adotado: boolean
+
+    // muitos pets podem estar associados a um único adotante
+    // um adotante pode adotar vários pets, mas cada pet é adotado por um único adotante.
     @ManyToOne(() => AdotanteEntity, (adotante) => adotante.pets)
     adotante!: AdotanteEntity;
+
+    @ManyToOne(() => AbrigoEntity, (abrigo) => abrigo.pets)
+    abrigo!: AbrigoEntity;
 
     constructor(
         nome: string,

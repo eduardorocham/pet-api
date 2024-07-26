@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import EnumEspecie from "../enum/Especie";
 import PetRepository from "../repositories/PetRepository";
 import PetEntity from "../entities/PetEntity";
 import EnumPorte from "../enum/Porte";
@@ -34,40 +33,32 @@ export default class PetController {
         })
         return res.status(200).json({ dados: data });
     }
-        
-    // async atualizaPet (
-    //     req: Request<TipoRequestParamsPet, {}, TipoRequestBodyPet>, 
-    //     res: Response<TipoResponseBodyPet>
-    // ) {
-    //     const { id } = req.params;
-    //     const { success, message } = await this.repository.atualizaPet(
-    //         Number(id),
-    //         req.body as PetEntity
-    //     );
-        
-    //     if (!success) {
-    //         return res.status(404).json({ error: message });
-    //     }
-
-    //     return res.status(404).json({ data: message }) 
-    // }
-
-    // async deletaPet (
-    //     req: Request<TipoRequestParamsPet, {}, TipoRequestBodyPet>, 
-    //     res: Response<TipoResponseBodyPet>
-    // ) {
-    //     const { id } = req.params;
-    //     const { success, message } = await this.repository.atualizaPet(
-    //         Number(id),
-    //         req.body as PetEntity
-    //     );
-        
-    //     if (!success) {
-    //         return res.status(404).json({ error: message });
-    //     }
-
-    //     return res.status(404).json({ data: message }) 
-    // }    
+    
+    async atualizaPet(
+        req: Request<TipoRequestParamsPet, {}, TipoRequestBodyPet>, 
+        res: Response<TipoResponseBodyPet>
+      ) {
+        const { id } = req.params;
+        await this.repository.atualizaPet(
+          Number(id),
+          req.body as PetEntity
+        );
+    
+        return res.sendStatus(204);
+    }
+    
+    async deletaPet(
+        req: Request<TipoRequestParamsPet, {}, TipoRequestBodyPet>, 
+        res: Response<TipoResponseBodyPet>
+      ) {
+        const { id } = req.params;
+    
+        await this.repository.deletaPet(
+          Number(id)
+        );
+    
+        return res.sendStatus(204);
+    }
 
     async adotaPet(
         req: Request<TipoRequestParamsPet, {}, TipoRequestBodyPet>, 

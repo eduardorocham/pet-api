@@ -32,7 +32,7 @@ export default class AdotanteEntity {
     })
     @JoinColumn()
     endereco?: EnderecoEntity;
-
+    // Define que uma instância de AdotanteEntity pode ter muitas instâncias de PetEntity.
     @OneToMany(() => PetEntity, (pet) => pet.adotante)
     pets!: PetEntity[]
   

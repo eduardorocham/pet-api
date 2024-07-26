@@ -25,11 +25,22 @@ export default class PetRepository implements PetInterface {
         return await this.petRepository.find();
     }
 
-    atualizaPet(id: number, pet: PetEntity): void {
-        throw new Error("Method not implemented.");
+    async atualizaPet(id: number, newData: PetEntity) {
+        const petToUpdate = await this.petRepository.findOne({ where: { id } });
+    
+        if (!petToUpdate) {
+            throw new NaoEncontrado("Pet não encontrado")
+        }
+
+        // Copia os dados do objeto newData para petToUpdate
+        Object.assign(petToUpdate, newData);
+
+        await this.petRepository.save(petToUpdate);
+
+        return { success: true };
     }
     
-    async deletaPet(id: number, pet: PetEntity) {
+    async deletaPet(id: number) {
         const petToRemove = await this.petRepository.findOne({ where: { id } });
 
         if (!petToRemove) {
