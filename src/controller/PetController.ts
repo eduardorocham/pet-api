@@ -13,34 +13,26 @@ export default class PetController {
     ) {
         const { adotado, especie, dataDeNascimento, nome, porte } = <PetEntity>req.body;
 
-        try {
-            const novoPet = new PetEntity(nome, especie, dataDeNascimento, adotado, porte);
-            await this.repository.criaPet(novoPet);
-    
-            return res.status(201).json({ dados: { id: novoPet.id, nome, especie, porte } });
-        } catch(err) {
-            res.status(500).json({ erros: err })
-        }
+        const novoPet = new PetEntity(nome, especie, dataDeNascimento, adotado, porte);
+        await this.repository.criaPet(novoPet);
+
+        return res.status(201).json({ dados: { id: novoPet.id, nome, especie, porte } });
     }
 
     async listaPets (
         req: Request<TipoRequestParamsPet, {}, TipoRequestBodyPet>, 
         res: Response<TipoResponseBodyPet>
     ) {
-        try {
-            const pets = await this.repository.listaPet();
-            const data = pets.map((pet) => {
-                return {
-                    id: pet.id,
-                    nome: pet.nome,
-                    porte: pet.porte !== null ? pet.porte : undefined,
-                    especie: pet.especie
-                }
-            })
-            return res.status(200).json({ dados: data });
-        } catch(err) {
-            return res.status(500).json({ erros: err })
-        }
+        const pets = await this.repository.listaPet();
+        const data = pets.map((pet) => {
+            return {
+                id: pet.id,
+                nome: pet.nome,
+                porte: pet.porte !== null ? pet.porte : undefined,
+                especie: pet.especie
+            }
+        })
+        return res.status(200).json({ dados: data });
     }
         
     // async atualizaPet (
@@ -83,14 +75,11 @@ export default class PetController {
     ) {
         const { pet_id, adotante_id } = req.params;
     
-        const { success, message } = await this.repository.adotaPet(
+        await this.repository.adotaPet(
           Number(pet_id), 
           Number(adotante_id)
         );
-    
-        if (!success) {
-          return res.status(404).json({ erros: message });
-        }
+
         return res.sendStatus(204);
     }
 
