@@ -6,7 +6,7 @@ import tratarErroValidacaoYup from "../../utils/trataValidacaoYup";
 
 yup.setLocale(pt);
 
-const schemaBodyAbrigo: yup.ObjectSchema<TipoRequestBodyAbrigo> = yup.object({
+const schemaBodyAbrigo: yup.ObjectSchema<Omit<TipoRequestBodyAbrigo, "endereco">> = yup.object({
   nome: yup.string().defined().required(),
   email: yup
     .string()

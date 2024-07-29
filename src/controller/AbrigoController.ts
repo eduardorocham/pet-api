@@ -10,17 +10,18 @@ export default class AbrigoController {
     req: Request<TipoRequestParamsAbrigo, {}, TipoRequestBodyAbrigo>, 
     res: Response<TipoResponseBodyAbrigo>
   ) {
-    const { nome, celular, email, senha } = <AbrigoEntity>req.body;
+    const { nome, celular, email, senha, endereco } = <AbrigoEntity>req.body;
 
     const novoAbrigo = new AbrigoEntity(
       nome,
       email,
       senha,
-      celular
+      celular,
+      endereco
     );
 
     await this.repository.criaAbrigo(novoAbrigo);
-    return res.status(201).json({ dados: { id: novoAbrigo.id, nome, email, celular } });
+    return res.status(201).json({ dados: { id: novoAbrigo.id, nome, email, celular, endereco } });
   }
 
   async atualizaAbrigo(
@@ -47,10 +48,10 @@ export default class AbrigoController {
         nome: abrigo.nome,
         email: abrigo.email,
         celular: abrigo.celular,
-        endereco: abrigo.endereco ?? undefined,
+        endereco: abrigo.endereco !== null ? abrigo.endereco : undefined,
       }
     })
-    return res.json({ dados });
+    return res.status(200).json({ dados });
   }
     
   async deletaAbrigo(
@@ -66,16 +67,16 @@ export default class AbrigoController {
     return res.sendStatus(204);
   }
 
-  // async atualizaEnderecoAbrigo(
-  //   req: Request<TipoRequestParamsAbrigo, {}, EnderecoEntity>, 
-  //   res: Response<TipoResponseBodyAbrigo>) {
-  //   const { id } = req.params;
+  async atualizaEnderecoAbrigo(
+    req: Request<TipoRequestParamsAbrigo, {}, EnderecoEntity>, 
+    res: Response<TipoResponseBodyAbrigo>) {
+    const { id } = req.params;
 
-  //   await this.repository.atualizaEnderecoAbrigo(
-  //     Number(id), 
-  //     req.body
-  //   );
+    await this.repository.atualizaEnderecoAbrigo(
+      Number(id), 
+      req.body
+    );
 
-  //   return res.sendStatus(204);
-  // }
+    return res.sendStatus(204);
+  }
 }

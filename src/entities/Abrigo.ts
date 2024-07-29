@@ -33,7 +33,7 @@ export default class AbrigoEntity {
     @JoinColumn()
     endereco?: EnderecoEntity;
 
-    @OneToMany(() => PetEntity, (pet) => pet.adotante)
+    @OneToMany(() => PetEntity, (pet) => pet.abrigo)
     pets!: PetEntity[]
 
     constructor(
@@ -42,7 +42,6 @@ export default class AbrigoEntity {
         senha: string,
         celular: string,
         endereco?: EnderecoEntity,
-        pets?: PetEntity[]
     ) {
         this.nome = nome;
         this.email = email;
@@ -54,6 +53,8 @@ export default class AbrigoEntity {
     @BeforeInsert()
     @BeforeUpdate()
     private async criptografaSenha(senha: string) {
-      this.senha = criaSenhaCriptografada(this.senha);
+        if (this.senha) {
+            this.senha = criaSenhaCriptografada(this.senha);
+        }
     }
 }

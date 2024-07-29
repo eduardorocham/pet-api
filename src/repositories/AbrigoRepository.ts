@@ -2,6 +2,7 @@ import { Repository } from "typeorm";
 import AbrigoEntity from "../entities/Abrigo";
 import AbrigoInterface from "./interfaces/AbrigoInterface";
 import { NaoEncontrado, RequisicaoRuim } from "../utils/manipulaErros";
+import EnderecoEntity from "../entities/Endereco";
 
 export default class AbrigoRepository implements AbrigoInterface {
     private abrigoRepository: Repository<AbrigoEntity>;
@@ -77,5 +78,22 @@ export default class AbrigoRepository implements AbrigoInterface {
     ): Promise<AbrigoEntity[]> {
         const abrigos = await this.abrigoRepository.find({ where: { [campo]:valor } });
         return abrigos;
+    }
+
+    async atualizaEnderecoAbrigo(idAbrigo: number, endereco: EnderecoEntity) {
+        const abrigo = await this.abrigoRepository.findOne({
+            where: { id: idAbrigo },
+        });
+      
+        if (!abrigo) {
+            new NaoEncontrado("Abrigo não encontrado!");
+        }
+      
+        const novoEndereco = new EnderecoEntity(endereco.cidade, endereco.estado);
+
+        if (abrigo) {
+            abrigo.endereco = novoEndereco;
+            await this.abrigoRepository.save(abrigo);
+        }
     }
 }

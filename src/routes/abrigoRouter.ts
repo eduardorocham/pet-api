@@ -20,7 +20,7 @@ const validateBodyAbrigo: RequestHandler = (req, res, next) =>
 
 const abrigoController = new AbrigoController(abrigoRepository);
 
-router.post("/abrigos", validateBodyAbrigo, validateBodyEndereco, (req, res) => abrigoController.criaAbrigo(req, res));
+router.post("/abrigos", validateBodyAbrigo, (req, res) => abrigoController.criaAbrigo(req, res));
 router.get("/abrigos", (req, res) => abrigoController.listaAbrigos(req, res));
 router.put("/abrigos/:id", verificaIdMiddleware, (req, res) => 
   abrigoController.atualizaAbrigo(req, res)
@@ -28,8 +28,8 @@ router.put("/abrigos/:id", verificaIdMiddleware, (req, res) =>
 router.delete("/abrigos/:id", verificaIdMiddleware, (req, res) => 
   abrigoController.deletaAbrigo(req, res)
 );
-// router.patch("/abrigos/:id", verificaIdMiddleware, validateBodyEndereco, (req, res) => 
-//   abrigoController.atualizaEnderecoAbrigo(req, res)
-// );
+router.patch("/:id", verificaIdMiddleware, validateBodyEndereco, (req, res) =>
+  abrigoController.atualizaEnderecoAbrigo(req, res)
+);
 
 export default router;
