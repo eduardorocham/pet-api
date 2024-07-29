@@ -28,7 +28,7 @@ router.put("/abrigos/:id", verificaIdMiddleware, (req, res) =>
 router.delete("/abrigos/:id", verificaIdMiddleware, (req, res) => 
   abrigoController.deletaAbrigo(req, res)
 );
-router.patch("/:id", verificaIdMiddleware, validateBodyEndereco, (req, res) =>
+router.patch("/abrigos/:id", verificaIdMiddleware, validateBodyEndereco, (req, res) =>
   abrigoController.atualizaEnderecoAbrigo(req, res)
 );
 
